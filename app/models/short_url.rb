@@ -4,15 +4,29 @@ class ShortUrl < ApplicationRecord
 
   validates :full_url, :presence => true, :url => true
 
-  before_create :generate_short_code
+  def short_code
+    if self.id.present?
+      generate_short_code
+    end
+  end
 
-  def generate_short_code
-    self.short_code = CHARACTERS.sample(3).join #temporary
+  def update_title!
   end
 
   private
 
-  def update_title!
+  def generate_short_code
+    map_number_to_characters(self.id)
+  end
+
+  def map_number_to_characters(number)
+    value = ''
+
+    if number / CHARACTERS.length > 0
+      value = map_number_to_characters(number / CHARACTERS.length)
+    end
+
+    value + CHARACTERS[number % CHARACTERS.length]
   end
 
 end
