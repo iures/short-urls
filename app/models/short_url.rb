@@ -4,13 +4,25 @@ class ShortUrl < ApplicationRecord
 
   validates :full_url, :presence => true, :url => true
 
+  after_save :update_title_later
+
   def short_code
     if self.id.present?
       generate_short_code
     end
   end
 
+  def update_title_later
+    UpdateTitleJob.perform_later(self.id)
+  end
+
   def update_title!
+    regexp = /<title>(.*?)<\/title>/
+    response = Faraday.get(self.full_url)
+
+    if matches = response.body.match(regexp)
+      self.update_column(:title, matches[1])
+    end
   end
 
   private
