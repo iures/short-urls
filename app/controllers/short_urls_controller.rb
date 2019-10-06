@@ -17,6 +17,14 @@ class ShortUrlsController < ApplicationController
   end
 
   def show
+    short_url = ShortUrl.find_by_short_code(params[:id])
+
+    if short_url
+      short_url.update_column(:click_count, short_url.click_count + 1)
+      redirect_to short_url.full_url
+    else
+      render :json => { error: "404 Not found" }, :status => 404
+    end
   end
 
 end
