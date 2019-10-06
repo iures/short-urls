@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe ShortUrlsController, type: :controller do
+  render_views true
 
   let(:parsed_response) { JSON.parse(response.body) }
 
   describe "index" do
-
     let!(:short_url) { ShortUrl.create(full_url: "https://www.test.rspec") }
     let(:public_attributes) do
       {
