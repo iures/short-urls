@@ -68,6 +68,15 @@ RSpec.describe ShortUrl, type: :model do
       end
     end
 
+    context "with a full_url that redirects" do
+      let(:short_url) { ShortUrl.create(full_url: "https://google.com") }
+
+      it "fetches the title" do
+        short_url.update_title!
+        expect(short_url.title).to eq("Google")
+      end
+    end
+
   end
 
 end
