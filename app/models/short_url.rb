@@ -12,6 +12,17 @@ class ShortUrl < ApplicationRecord
     end
   end
 
+  def self.find_by_short_code(short_code)
+    id = 0
+
+    short_code.each_char do |char|
+      id *= CHARACTERS.length
+      id += CHARACTERS.index(char)
+    end
+
+    ShortUrl.find_by(id: id)
+  end
+
   def update_title_later
     UpdateTitleJob.perform_later(self.id)
   end
