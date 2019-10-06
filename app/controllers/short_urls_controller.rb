@@ -4,10 +4,16 @@ class ShortUrlsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    puts 'asdf'
   end
 
   def create
+    short_url = ShortUrl.create(full_url: params[:full_url])
+
+    if short_url.errors.present?
+      render json: { errors: short_url.errors }
+    else
+      render json: { short_code: short_url.short_code }
+    end
   end
 
   def show
