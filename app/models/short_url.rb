@@ -1,26 +1,18 @@
 class ShortUrl < ApplicationRecord
 
-  CHARACTERS = [*'0'..'9', *'a'..'z', *'A'..'Z'].freeze
-
   validates :full_url, :presence => true, :url => true
 
   after_save :update_title_later
 
-  def short_code
-    if self.id.present?
-      generate_short_code
-    end
+  def self.find_by_short_code(short_code)
+    id = ShortCodeParser.to_number(short_code)
+    ShortUrl.find_by_id(id)
   end
 
-  def self.find_by_short_code(short_code)
-    id = 0
-
-    short_code.each_char do |char|
-      id *= CHARACTERS.length
-      id += CHARACTERS.index(char)
+  def short_code
+    if self.id.present?
+      ShortCodeParser.from_number(self.id)
     end
-
-    ShortUrl.find_by(id: id)
   end
 
   def update_title_later
@@ -49,20 +41,6 @@ class ShortUrl < ApplicationRecord
     end
 
     response
-  end
-
-  def generate_short_code
-    map_number_to_characters(self.id)
-  end
-
-  def map_number_to_characters(number)
-    value = ''
-
-    if number / CHARACTERS.length > 0
-      value = map_number_to_characters(number / CHARACTERS.length)
-    end
-
-    value + CHARACTERS[number % CHARACTERS.length]
   end
 
 end
