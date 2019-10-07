@@ -1,8 +1,6 @@
 class PageScraper
   MAX_REDIRECTS = 5
 
-  @page = nil? #test without
-
   attr_accessor :url_str
 
   def initialize(url_str)
