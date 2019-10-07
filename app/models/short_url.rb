@@ -20,27 +20,11 @@ class ShortUrl < ApplicationRecord
   end
 
   def update_title!
-    regexp = /<title>(.*?)<\/title>/
+    title = PageScraper.new(self.full_url).extract_tag('title')
 
-    response = fetch_title(self.full_url)
-
-    if matches = response.body.match(regexp)
-      self.update_column(:title, matches[1])
+    if title.present?
+      self.update_column(:title, title)
     end
-  end
-
-  private
-
-  def fetch_title(uri_str, limit = 5)
-    raise ArgumentError, 'HTTP redirect too deep' if limit == 0
-
-    response = Net::HTTP.get_response(URI.parse(uri_str))
-
-    if response.code == "301"
-      response = fetch_title(response.header['location'], limit - 1)
-    end
-
-    response
   end
 
 end
