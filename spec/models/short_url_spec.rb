@@ -66,6 +66,7 @@ RSpec.describe ShortUrl, type: :model do
         short_url.update_column(:id, 50)
         expect(short_url.short_code).to eq("O")
       end
+
     end
 
     context "with a full_url that redirects" do
@@ -75,6 +76,7 @@ RSpec.describe ShortUrl, type: :model do
         short_url.update_title!
         expect(short_url.title).to eq("Google")
       end
+
     end
 
   end

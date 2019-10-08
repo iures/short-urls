@@ -36,9 +36,24 @@ RSpec.describe ShortUrlsController, type: :controller do
       expect(parsed_response['short_code']).to be_a(String)
     end
 
-    it "does not create a short_url" do
-      post :create, params: { full_url: "nope!" }, format: :json
-      expect(parsed_response['errors']['full_url']).to be_include("is not a valid url")
+    context "with an invalid url" do
+
+      it "does not create a short_url" do
+        post :create, params: { full_url: "nope!" }, format: :json
+        expect(parsed_response['errors']['full_url']).to be_include("is not a valid url")
+      end
+
+    end
+
+    context "with duplicated url" do
+      let!(:short_url) { ShortUrl.create(full_url: "https://www.testduplicated.rspec") }
+
+      it "returns the existing short code" do
+        post :create, params: { full_url: "https://www.testduplicated.rspec" }, format: :json
+
+        expect(parsed_response['short_code']).to eq(short_url.short_code)
+      end
+
     end
 
   end

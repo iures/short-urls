@@ -5,13 +5,14 @@ class ShortUrlsController < ApplicationController
 
   def index
     @urls = ShortUrl.order(:click_count => :desc).limit(100).to_a
+
     respond_to do |format|
       format.json
-   end
+    end
   end
 
   def create
-    short_url = ShortUrl.create(full_url: params[:full_url])
+    short_url = ShortUrl.find_or_create_by(full_url: params[:full_url])
 
     if short_url.errors.present?
       render json: { errors: short_url.errors }
